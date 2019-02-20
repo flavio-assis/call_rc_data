@@ -94,7 +94,7 @@ class call_data(object):
             full_time = datetime.datetime.now().strftime('%d/%m/%Y %T')
             data_payload.append(self.payload.format(full_time, d))
         
-        with open('dpay', 'w') as dpay:
+        with open('/tmp/dpay', 'w') as dpay:
             dpay.write("\n".join(data_payload))
         
         for _data in data_payload:
