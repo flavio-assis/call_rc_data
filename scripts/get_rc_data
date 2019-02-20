@@ -1,0 +1,21 @@
+#!/bin/python3.6
+# -*- coding: utf-8 -*-
+
+
+import time
+from call_rc_data.daemon import Daemon
+from call_rc_data.call_data_daemon import call_data
+
+
+class rc_data_main(Daemon):
+    """Script to read ScaleIO data and send to a Zabbix server or Proxy."""
+
+    def run(self):
+        c_rc_data = call_data()
+        while True: 
+            c_rc_data.get_data()
+            time.sleep(10)
+
+if __name__ == "__main__":
+    main = rc_data_main('/tmp/rc_call_data.pid')
+    main.start()
