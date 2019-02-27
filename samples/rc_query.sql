@@ -18,8 +18,8 @@ SELECT
    WHERE
      --call.q_num != '8011'
      --AND
-     call.time_end >= '${formattedStartDate}'
-     AND call.time_end <= '${formattedEndDate}'
+     call.time_end >= '{}'
+     AND call.time_end <= '{}'
      AND call.call_result IN ('WPS', 'WP', 'W', 'WPN', 'WN', 'WPCLBS', 'WPCLF', 'WCPLBS', 'WCPL', 'WPFS', 'WCPLF', 'WPCL')
      AND (
        call.call_result IN ('WPS', 'WPCLBS', 'WCPLBS', 'WCPL', 'WPFS', 'WPCL')
