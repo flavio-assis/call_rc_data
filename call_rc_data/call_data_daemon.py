@@ -57,6 +57,30 @@ class call_data(object):
                         'Accept': "application/json",
                         'Authorization': "Splunk {}".format(os.environ['SPLUNK_TOKEN']),
                         'cache-control': "no-cache"}
+        self.t_query = ("{0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}',{8},{9},{10},{11},{12},{13},'{14}','{15}',"
+                        "'{16}','{17}','{18}','{19}','{20}','{21}',{22},'{23}','{24}',{25},'{26}'")
+
+    def t_conn(self):
+        """Connect on the RC database."""
+
+        try:
+            _t_conn = connect(host="", user="", password="", port=5432, database="rc_calls")
+            return _t_conn
+        except Exception as error:
+            full_time = datetime.datetime.now().strftime('%d/%m/%Y %T')
+            rc_logger(self.error_msg.format(full_time, error, 't_conn')).log_data()
+
+    def t_send_data(self, _t_data):
+        try:
+            t_conn = self.t_conn()
+            t_cur = t_conn.cursor()
+            for t_item in _t_data:
+                t_cur.execute("insert into callcent_queuecalls ({}) values ({});".format(",".join(self.column_names),
+                                                                                          self.t_query.format(*list(t_item))))
+            t_conn.commit()
+        except Exception as error:
+            full_time = datetime.datetime.now().strftime('%d/%m/%Y %T')
+            rc_logger(self.error_msg.format(full_time, error, 't_send_data')).log_data()
 
     def conn(self):
         """Connect on the RC database."""
@@ -106,6 +130,7 @@ class call_data(object):
             cur.execute(self.query.format(self.last_id_call))
             get_data = cur.fetchall()
             if len(get_data) > 0:
+                self.t_send_data(get_data)
                 items = [dict(zip(self.column_names, i)) for i in get_data]
                 self.last_id_call = items[-1]['idcallcent_queuecalls']
                 list_items = []
@@ -133,7 +158,8 @@ class call_data(object):
             print('teste')
             data_payload = []
             for d in _data:
-                full_time = int(datetime.datetime.strptime(d.split("\"time_start\": \"")[1].split('"')[0], "%Y-%m-%d %H:%M:%S").timestamp())
+                full_time = int(datetime.datetime.strptime(
+                    d.split("\"time_start\": \"")[1].split('"')[0], "%Y-%m-%d %H:%M:%S").timestamp()) - 3*3600
                 data_payload.append(self.payload.format(full_time, d))
         
             with open('/tmp/dpay', 'w') as dpay:

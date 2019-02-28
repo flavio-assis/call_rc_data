@@ -6,6 +6,7 @@ __pycache__/
 # C extensions
 *.so
 dpay
+giu_table
 
 # Distribution / packaging
 .Python
