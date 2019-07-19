@@ -159,7 +159,7 @@ class call_data(object):
             data_payload = []
             for d in _data:
                 full_time = int(datetime.datetime.strptime(
-                    d.split("\"time_start\": \"")[1].split('"')[0], "%Y-%m-%d %H:%M:%S").timestamp()) - 3*3600
+                    d.split("\"time_start\": \"")[1].split('"')[0], "%Y-%m-%d %H:%M:%S").timestamp())
                 data_payload.append(self.payload.format(full_time, d))
         
             with open('/tmp/dpay', 'w') as dpay:
